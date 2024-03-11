@@ -1,6 +1,10 @@
 package br.com.alura.loja.testes;
 
+import br.com.alura.loja.dao.CategoriaDao;
+import br.com.alura.loja.dao.ProdutoDao;
+import br.com.alura.loja.modelo.Categoria;
 import br.com.alura.loja.modelo.Produto;
+import br.com.alura.loja.util.JPAUtil;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,18 +19,22 @@ import java.util.Map;
 public class CadastroDeProduto {
 
     public static void main(String[] args) {
-        Produto celular = new Produto();
+        Categoria celulares = new Categoria("CELULARES");
 
-        celular.setNome("Xiamoi Redmi");
-        celular.setDescricao("Muito legal");
-        celular.setPreco(new BigDecimal("800"));
+        Produto celular = new Produto("Xiamoi Redmi","Muito legal",new BigDecimal("800"), celulares);
 
-        EntityManagerFactory factory = Persistence
-                .createEntityManagerFactory("loja");
 
-        EntityManager em = factory.createEntityManager();
+
+
+        EntityManager em = JPAUtil.getEntityManager();
+        ProdutoDao produtoDao = new ProdutoDao(em);
+        CategoriaDao categoriaDao = new CategoriaDao(em);
+
         em.getTransaction().begin();
-        em.persist(celular);
+
+        categoriaDao.cadastrar(celulares);
+        produtoDao.cadastrar(celular);
+
         em.getTransaction().commit();
         em.close();
     }
